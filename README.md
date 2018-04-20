@@ -8,6 +8,8 @@ The Preprint of our book titled "**Behavior Trees in Robotics and AI**" is avail
  <br/>       
 A behavior tree library in `C++`.
 
+I am working with [Davide Faconti](https://github.com/facontidavide) on a new version of this library. The new version will have better graphic user interface and it will be the core module for the ROS version and the YARP version of this library.
+
 REFERENCE
 ------------
 Please refer to the following paper when using the library:
