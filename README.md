@@ -1,6 +1,3 @@
-
-
-
 NEWS!
 -----------
 
@@ -13,6 +10,7 @@ Our book **Behavior Trees in Robotics and AI**, published by CRC Press Taylor & 
 
 <br><br><br><br><br><br><br><br><br><br>
 
+-----------
 
 <img width="100" alt="portfolio_view" src="http://michelecolledanchise.com/BTPPLOGO.png"> BT++ 
 ====
