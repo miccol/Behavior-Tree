@@ -1,6 +1,11 @@
+
+
+
 NEWS!
 -----------
-The Preprint of our book titled "**Behavior Trees in Robotics and AI**" is available here: https://arxiv.org/abs/1709.00084
+|<img width="700" alt="portfolio_view" src="http://michelecolledanchise.com/wp-content/uploads/2018/05/btbook.jpg">| Our book Behavior Trees in Robotics and AI, published by CRC Press Taylor & Francis is available for purchase (ebook and hardcover) on the CRC Press Store or Amazon. The Preprint version (free) is available here: https://arxiv.org/abs/1709.00084|
+|:-------------:|------|
+
 
 <img width="100" alt="portfolio_view" src="http://michelecolledanchise.com/BTPPLOGO.png"> BT++ 
 ====
