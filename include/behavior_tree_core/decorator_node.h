@@ -47,9 +47,9 @@ class DecoratorNode : public TreeNode
 class SimpleDecoratorNode : public DecoratorNode
 {
   public:
-    typedef std::function<NodeStatus(NodeStatus)> TickFunctor;
+    typedef std::function<NodeStatus(NodeStatus,const Blackboard::Ptr&)> TickFunctor;
 
-    // Constructor: you must provide the funtion to call when tick() is invoked
+    // Constructor: you must provide the function to call when tick() is invoked
     SimpleDecoratorNode(const std::string& name, TickFunctor tick_functor);
 
     ~SimpleDecoratorNode() override = default;

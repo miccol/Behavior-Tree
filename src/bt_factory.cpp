@@ -22,11 +22,18 @@ BehaviorTreeFactory::BehaviorTreeFactory()
     registerNodeType<SequenceNode>("Sequence");
     registerNodeType<SequenceNodeWithMemory>("SequenceStar");
 
-    registerNodeType<DecoratorNegationNode>("Negation");
-    registerNodeType<DecoratorRetryNode>("RetryUntilSuccesful");
-    registerNodeType<DecoratorRepeatNode>("Repeat");
+    registerNodeType<NegationNode>("Negation");
+    registerNodeType<RetryNode>("RetryUntilSuccesful");
+    registerNodeType<RepeatNode>("Repeat");
+
+    registerNodeType<AlwaysSuccessNode>("AlwaysSuccess");
+    registerNodeType<AlwaysFailureNode>("AlwaysFailure");
 
     registerNodeType<DecoratorSubtreeNode>("SubTree");
+
+    registerNodeType<BlackboardPreconditionNode<int>>("BlackboardCheckInt");
+    registerNodeType<BlackboardPreconditionNode<double>>("BlackboardCheckDouble");
+    registerNodeType<BlackboardPreconditionNode<std::string>>("BlackboardCheckString");
 }
 
 bool BehaviorTreeFactory::unregisterBuilder(const std::string& ID)
@@ -51,7 +58,29 @@ void BehaviorTreeFactory::registerBuilder(const std::string& ID, NodeBuilder bui
     builders_.insert(std::make_pair(ID, builder));
 }
 
-void BehaviorTreeFactory::registerSimpleCondition(const std::string &ID, const std::function<NodeStatus()> &tick_functor)
+//void BehaviorTreeFactory::registerSimpleCondition(const std::string &ID,
+//                                                  const std::function<NodeStatus()> &tick_functor)
+//{
+//    auto wrapper = [tick_functor](const Blackboard::Ptr&){ return tick_functor(); };
+//    registerSimpleCondition(ID, wrapper);
+//}
+
+//void BehaviorTreeFactory::registerSimpleAction(const std::string& ID,
+//                                               const std::function<NodeStatus()> &tick_functor)
+//{
+//    auto wrapper = [tick_functor](const Blackboard::Ptr&){ return tick_functor(); };
+//    registerSimpleAction(ID, wrapper);
+//}
+
+//void BehaviorTreeFactory::registerSimpleDecorator(const std::string& ID,
+//                                                  const std::function<NodeStatus(NodeStatus)> &tick_functor)
+//{
+//    auto wrapper = [tick_functor](NodeStatus status, const Blackboard::Ptr&){ return tick_functor(status); };
+//    registerSimpleDecorator(ID, wrapper);
+//}
+
+void BehaviorTreeFactory::registerSimpleCondition(const std::string &ID,
+                                                  const SimpleConditionNode::TickFunctor &tick_functor)
 {
     NodeBuilder builder = [tick_functor, ID](const std::string& name, const NodeParameters&) {
         return std::unique_ptr<TreeNode>(new SimpleConditionNode(name, tick_functor));
@@ -61,7 +90,8 @@ void BehaviorTreeFactory::registerSimpleCondition(const std::string &ID, const s
     storeNodeModel<SimpleConditionNode>(ID);
 }
 
-void BehaviorTreeFactory::registerSimpleAction(const std::string& ID, const std::function<NodeStatus()>& tick_functor)
+void BehaviorTreeFactory::registerSimpleAction(const std::string& ID,
+                                               const SimpleActionNode::TickFunctor& tick_functor)
 {
     NodeBuilder builder = [tick_functor, ID](const std::string& name, const NodeParameters&) {
         return std::unique_ptr<TreeNode>(new SimpleActionNode(name, tick_functor));
@@ -69,6 +99,17 @@ void BehaviorTreeFactory::registerSimpleAction(const std::string& ID, const std:
 
     registerBuilder(ID, builder);
     storeNodeModel<SimpleActionNode>(ID);
+}
+
+void BehaviorTreeFactory::registerSimpleDecorator(const std::string &ID,
+                                                  const SimpleDecoratorNode::TickFunctor &tick_functor)
+{
+    NodeBuilder builder = [tick_functor, ID](const std::string& name, const NodeParameters&) {
+        return std::unique_ptr<TreeNode>(new SimpleDecoratorNode(name, tick_functor));
+    };
+
+    registerBuilder(ID, builder);
+    storeNodeModel<SimpleDecoratorNode>(ID);
 }
 
 std::unique_ptr<TreeNode> BehaviorTreeFactory::instantiateTreeNode(const std::string& ID, const std::string& name,
@@ -82,6 +123,16 @@ std::unique_ptr<TreeNode> BehaviorTreeFactory::instantiateTreeNode(const std::st
     std::unique_ptr<TreeNode> node = it->second(name, params);
     node->setRegistrationName(ID);
     return node;
+}
+
+const std::map<std::string, NodeBuilder> &BehaviorTreeFactory::builders() const
+{
+    return builders_;
+}
+
+const std::vector<TreeNodeModel> &BehaviorTreeFactory::models() const
+{
+    return treenode_models_;
 }
 
 void BehaviorTreeFactory::sortTreeNodeModel()

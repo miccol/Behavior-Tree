@@ -14,33 +14,41 @@
 #ifndef BEHAVIOR_TREE_H
 #define BEHAVIOR_TREE_H
 
-#include "behavior_tree_core/parallel_node.h"
-#include "behavior_tree_core/fallback_node.h"
-#include "behavior_tree_core/sequence_node.h"
+#include "behavior_tree_core/controls/parallel_node.h"
+#include "behavior_tree_core/controls/fallback_node.h"
+#include "behavior_tree_core/controls/sequence_node.h"
 
-#include "behavior_tree_core/sequence_node_with_memory.h"
-#include "behavior_tree_core/fallback_node_with_memory.h"
+#include "behavior_tree_core/controls/sequence_node_with_memory.h"
+#include "behavior_tree_core/controls/fallback_node_with_memory.h"
 
 #include "behavior_tree_core/action_node.h"
 #include "behavior_tree_core/condition_node.h"
 
-#include "behavior_tree_core/decorator_negation_node.h"
-#include "behavior_tree_core/decorator_retry_node.h"
-#include "behavior_tree_core/decorator_repeat_node.h"
-#include "behavior_tree_core/decorator_subtree_node.h"
+#include "behavior_tree_core/decorators/negation_node.h"
+#include "behavior_tree_core/decorators/retry_node.h"
+#include "behavior_tree_core/decorators/repeat_node.h"
+#include "behavior_tree_core/decorators/subtree_node.h"
+
+#include "behavior_tree_core/decorators/always_success_node.h"
+#include "behavior_tree_core/decorators/always_failure_node.h"
+#include "behavior_tree_core/decorators/blackboard_precondition_node.h"
 
 namespace BT
 {
 
-void applyRecursiveVisitor(const TreeNode* node, const std::function<void(const TreeNode*)>& visitor);
+void applyRecursiveVisitor(const TreeNode* node,
+                           const std::function<void(const TreeNode*)>& visitor);
 
-void applyRecursiveVisitor(TreeNode* node, const std::function<void(TreeNode*)> &visitor);
+void applyRecursiveVisitor(TreeNode* node,
+                           const std::function<void(TreeNode*)> &visitor);
 
 /**
  * Debug function to print on a stream
  */
 void printTreeRecursively(const TreeNode* root_node);
 
+void assignBlackboardToEntireTree(TreeNode* root_node,
+                                 const Blackboard::Ptr& bb);
 
 typedef std::vector<std::pair<uint16_t, uint8_t>> SerializedTreeStatus;
 

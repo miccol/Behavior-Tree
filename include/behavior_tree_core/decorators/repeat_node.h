@@ -11,30 +11,36 @@
 *   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "behavior_tree_core/condition_node.h"
+#ifndef DECORATOR_REPEAT_NODE_H
+#define DECORATOR_REPEAT_NODE_H
+
+#include "behavior_tree_core/decorator_node.h"
 
 namespace BT
 {
-
-ConditionNode::ConditionNode(const std::string& name, const NodeParameters& parameters)
-    : LeafNode::LeafNode(name, parameters)
+class RepeatNode : public DecoratorNode
 {
+  public:
+    // Constructor
+    RepeatNode(const std::string& name, unsigned int NTries);
+
+    RepeatNode(const std::string& name, const NodeParameters& params);
+
+    virtual ~RepeatNode() override = default;
+
+    static const NodeParameters& requiredNodeParameters()
+    {
+        static NodeParameters params = {{NUM_CYCLES, "1"}};
+        return params;
+    }
+
+  private:
+    unsigned NTries_;
+    unsigned TryIndx_;
+
+    static constexpr const char* NUM_CYCLES = "num_cycles";
+    virtual BT::NodeStatus tick() override;
+};
 }
 
-void ConditionNode::halt()
-{
-}
-
-SimpleConditionNode::SimpleConditionNode(const std::string &name,
-                                         TickFunctor tick_functor) :
-    ConditionNode(name, NodeParameters()),
-    tick_functor_(std::move(tick_functor))
-{
-}
-
-NodeStatus SimpleConditionNode::tick()
-{
-    return tick_functor_(blackboard());
-}
-
-}
+#endif

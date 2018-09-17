@@ -19,16 +19,18 @@
 #include <map>
 #include <set>
 
+#include "non_std/optional.hpp"
 #include "behavior_tree_core/tick_engine.h"
 #include "behavior_tree_core/exceptions.h"
 #include "behavior_tree_core/signal.h"
 #include "behavior_tree_core/basic_types.h"
+#include "Blackboard/blackboard.h"
 
 namespace BT
 {
 // We call Parameters the set of Key/Values that can be read from file and are
 // used to parametrize an object. It is up to the user's code to parse the string.
-typedef std::map<std::string, std::string> NodeParameters;
+typedef std::unordered_map<std::string, std::string> NodeParameters;
 
 typedef std::chrono::high_resolution_clock::time_point TimePoint;
 
@@ -50,6 +52,8 @@ class TreeNode
     TreeNode(const std::string& name, const NodeParameters& parameters);
     virtual ~TreeNode() = default;
 
+    typedef std::shared_ptr<TreeNode> Ptr;
+
     /// The method that will be executed to invoke tick(); and setStatus();
     virtual BT::NodeStatus executeTick();
 
@@ -62,9 +66,13 @@ class TreeNode
 
     void setStatus(NodeStatus new_status);
 
+    void setBlackboard(const Blackboard::Ptr& bb);
+
+    const Blackboard::Ptr &blackboard() const;
+
     const std::string& name() const;
 
-    /// Blocking funtion that will sleep until the setStatus() is called with
+    /// Blocking function that will sleep until the setStatus() is called with
     /// either RUNNING, FAILURE or SUCCESS.
     BT::NodeStatus waitValidStatus();
 
@@ -76,7 +84,7 @@ class TreeNode
 
     /**
      * @brief subscribeToStatusChange is used to attach a callback to a status change.
-     * AS soon as StatusChangeSubscriber goes out of scope (it is a shared_ptr) the callback
+     * When StatusChangeSubscriber goes out of scope (it is a shared_ptr) the callback
      * is unsubscribed automatically.
      *
      * @param callback. Must have signature void funcname(NodeStatus prev_status, NodeStatus new_status)
@@ -100,15 +108,54 @@ class TreeNode
     /// Method to be implemented by the user
     virtual BT::NodeStatus tick() = 0;
 
+    /** Get a parameter from the passed NodeParameters and convert it to type T.
+     */
     template <typename T>
-    T getParam(const std::string& key) const
+    BT::optional<T> getParam(const std::string& key) const
+    {
+        T out;
+        if( getParam(key, out))
+        {
+            return std::move(out);
+        }
+        else{
+            return BT::nullopt;
+        }
+    }
+
+    /** Get a parameter from the passed NodeParameters and convert it to type T.
+     *
+     * return false either if there is no parameter with this key or if conversion failed.
+     */
+    template <typename T>
+    bool getParam(const std::string& key, T& destination) const
     {
         auto it = parameters_.find(key);
         if (it == parameters_.end())
         {
-            throw std::invalid_argument(std::string("Can't find the parameter with key: ") + key);
+            return false;
         }
-        return convertFromString<T>(it->second.c_str());
+        const std::string& str = it->second;
+
+        try{
+            // check if it follows this ${pattern}, if it does, search inside the blackboard
+            if( bb_ && str.size()>=4 && str[0] == '$' && str[1] == '{' && str.back() == '}')
+            {
+                const std::string stripped_key( &str[2], str.size()-3);
+                bool found = bb_->get(stripped_key, destination);
+                return found;
+            }
+            else{
+                destination = convertFromString<T>(str.c_str());
+                return true;
+            }
+        }
+        catch( std::runtime_error& err)
+        {
+            std::cout << "Exception at getParam(" <<
+                         key << "): " << err.what() << std::endl;
+            return false;
+        }
     }
 
     /// registrationName() is set by the BehaviorTreeFactory
@@ -132,9 +179,11 @@ class TreeNode
     std::string registration_name_;
 
     const NodeParameters parameters_;
+
+    Blackboard::Ptr bb_;
 };
 
-typedef std::shared_ptr<TreeNode> TreeNodePtr;
+
 
 
 }

@@ -2,7 +2,7 @@
 #include "action_test_node.h"
 #include "condition_test_node.h"
 #include "behavior_tree_core/xml_parsing.h"
-#include "crossdoor_dummy_nodes.h"
+#include "../examples/crossdoor_dummy_nodes.h"
 
 // clang-format off
 
@@ -80,7 +80,7 @@ const std::string xml_text_subtree = R"(
 TEST(BehaviorTreeFactory, VerifyLargeTree)
 {
     BT::BehaviorTreeFactory factory;
-    CrossDoor cross_door(factory);
+    CrossDoor::RegisterNodes(factory);
 
     BT::XMLParser parser(factory);
     parser.loadFromText(xml_text);
@@ -96,9 +96,9 @@ TEST(BehaviorTreeFactory, VerifyLargeTree)
     ASSERT_EQ(res, true);
     ASSERT_EQ(errors.size(), 0);
 
-    std::vector<BT::TreeNodePtr> nodes;
+    std::vector<BT::TreeNode::Ptr> nodes;
 
-    BT::TreeNodePtr root_node = parser.instantiateTree(nodes);
+    BT::TreeNode::Ptr root_node = parser.instantiateTree(nodes);
 
     BT::printTreeRecursively(root_node.get());
 
@@ -128,7 +128,7 @@ TEST(BehaviorTreeFactory, VerifyLargeTree)
     ASSERT_EQ(sequence_closed->child(2)->name(), "PassThroughDoor");
     ASSERT_EQ(sequence_closed->child(3)->name(), "CloseDoor");
 
-    auto decorator = dynamic_cast<const BT::DecoratorNegationNode*>(sequence_closed->child(0));
+    auto decorator = dynamic_cast<const BT::NegationNode*>(sequence_closed->child(0));
     ASSERT_TRUE(decorator != nullptr);
 
     ASSERT_EQ(decorator->child()->name(), "IsDoorOpen");
@@ -137,7 +137,7 @@ TEST(BehaviorTreeFactory, VerifyLargeTree)
 TEST(BehaviorTreeFactory, Subtree)
 {
     BT::BehaviorTreeFactory factory;
-    CrossDoor cross_door(factory);
+    CrossDoor::RegisterNodes(factory);
 
     BT::XMLParser parser(factory);
     parser.loadFromText(xml_text_subtree);
@@ -153,9 +153,9 @@ TEST(BehaviorTreeFactory, Subtree)
     ASSERT_EQ(res, true);
     ASSERT_EQ(errors.size(), 0);
 
-    std::vector<BT::TreeNodePtr> nodes;
+    std::vector<BT::TreeNode::Ptr> nodes;
 
-    BT::TreeNodePtr root_node = parser.instantiateTree( nodes);
+    BT::TreeNode::Ptr root_node = parser.instantiateTree( nodes);
     BT::printTreeRecursively(root_node.get());
 
     ASSERT_EQ(root_node->name(), "root_selector");
@@ -178,7 +178,7 @@ TEST(BehaviorTreeFactory, Subtree)
     ASSERT_EQ(sequence->child(2)->name(), "PassThroughDoor");
     ASSERT_EQ(sequence->child(3)->name(), "CloseDoor");
 
-    auto decorator = dynamic_cast<const BT::DecoratorNegationNode*>(sequence->child(0));
+    auto decorator = dynamic_cast<const BT::NegationNode*>(sequence->child(0));
     ASSERT_TRUE(decorator != nullptr);
 
     ASSERT_EQ(decorator->child()->name(), "IsDoorLocked");

@@ -43,27 +43,32 @@ set(BT_Source
 	src/action_node.cpp
         src/basic_types.cpp
         src/decorator_node.cpp
-        src/decorator_negation_node.cpp
-        src/decorator_repeat_node.cpp
-        src/decorator_retry_node.cpp
 	src/condition_node.cpp
 	src/control_node.cpp
 	src/exceptions.cpp
 	src/leaf_node.cpp
 	src/tick_engine.cpp
-	src/parallel_node.cpp
-	src/fallback_node.cpp
-	src/sequence_node.cpp
-	src/fallback_node_with_memory.cpp
-	src/sequence_node_with_memory.cpp
-	src/tree_node.cpp
+        src/tree_node.cpp
         src/bt_factory.cpp
         src/behavior_tree.cpp
-
         src/xml_parsing.cpp
-        src/bt_file_logger.cpp
-        3rdparty/tinyXML2/tinyxml2.cpp
 
+        src/decorators/negation_node.cpp
+        src/decorators/repeat_node.cpp
+        src/decorators/retry_node.cpp
+
+        src/controls/parallel_node.cpp
+        src/controls/fallback_node.cpp
+        src/controls/sequence_node.cpp
+        src/controls/fallback_node_with_memory.cpp
+        src/controls/sequence_node_with_memory.cpp
+
+
+        src/loggers/bt_cout_logger.cpp
+        src/loggers/bt_file_logger.cpp
+        src/loggers/bt_minitrace_logger.cpp
+
+        3rdparty/tinyXML2/tinyxml2.cpp
         3rdparty/minitrace/minitrace.cpp
 )
 include_directories(include 3rdparty/)
@@ -75,7 +80,7 @@ find_package(ZMQ)
 if( ZMQ_FOUND )
     message(STATUS "ZeroMQ found.")
     add_definitions( -DZMQ_FOUND )
-    set(BT_Source ${BT_Source} src/bt_zmq_publisher.cpp )
+    set(BT_Source ${BT_Source} src/loggers/bt_zmq_publisher.cpp )
 
     set(BEHAVIOR_TRE_LIBRARIES behavior_tree_core zmq)
 else()
@@ -121,10 +126,6 @@ endif()
 # COMPILING EXAMPLES and TOOLS
 ######################################################
 
-
-add_executable(crossdoor_example gtest/crossdoor_example.cpp )
-target_link_libraries(crossdoor_example ${BEHAVIOR_TRE_LIBRARIES} )
-
 add_executable(bt_log_cat         tools/bt_log_cat.cpp )
 target_link_libraries(bt_log_cat  behavior_tree_core )
 
@@ -133,8 +134,16 @@ if( ZMQ_FOUND )
     target_link_libraries(bt_recorder  ${BEHAVIOR_TRE_LIBRARIES} )
 endif()
 
-add_executable(simple_example gtest/simple_example.cpp )
-target_link_libraries(simple_example ${BEHAVIOR_TRE_LIBRARIES} )
+function(BuildExample filename)
+  add_executable(${filename} examples/${filename}.cpp )
+  target_link_libraries(${filename} ${BEHAVIOR_TRE_LIBRARIES} )
+endfunction()
+
+BuildExample(tutorial_programmatic_tree)
+BuildExample(tutorial_factory_tree)
+BuildExample(tutorial_sequence_star)
+BuildExample(tutorial_blackboard)
+BuildExample(crossdoor_example)
 
 
 ######################################################
