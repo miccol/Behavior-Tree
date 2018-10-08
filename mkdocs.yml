@@ -1,0 +1,42 @@
+site_name: BehaviorTree.CPP
+site_description: Introduction to Behavior Trees
+site_author: Davide Faconti
+
+copyright: 'Copyright &copy; 2018 Davide Faconti, Eurecat'
+
+theme:
+  name: 'material'
+  language: en
+  logo: 'images/BT.png'
+  feature:
+    tabs: true
+  palette:
+    primary: indigo
+    accent: indigo
+  font:
+    text: Roboto
+    code: Roboto Mono
+  
+repo_name: 'Eurecat/BehaviorTree.CPP'
+repo_url: 'https://github.com/Eurecat/BehaviorTree.CPP'
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - codehilite:
+      guess_lang: true
+
+
+pages:
+    - Home: index.md
+    - Learn the basics:
+       - The Basics:       BT_basics.md
+       - Sequence Nodes:    SequenceNode.md
+       - Fallback Nodes:    FallbackNode.md
+       - Decorators Nodes: DecoratorNode.md
+       - The BlackBoard:   BlackBoard.md
+    - Getting Started: 
+       - How to use the library: getting_started.md
+       - BT at run-time: getting_started.md
+       - Examples: getting_started.md

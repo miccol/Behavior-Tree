@@ -36,10 +36,10 @@
 namespace BT
 {
 
-void applyRecursiveVisitor(const TreeNode* node,
+void applyRecursiveVisitor(const TreeNode* root_node,
                            const std::function<void(const TreeNode*)>& visitor);
 
-void applyRecursiveVisitor(TreeNode* node,
+void applyRecursiveVisitor(TreeNode* root_node,
                            const std::function<void(TreeNode*)> &visitor);
 
 /**
@@ -49,6 +49,9 @@ void printTreeRecursively(const TreeNode* root_node);
 
 void assignBlackboardToEntireTree(TreeNode* root_node,
                                  const Blackboard::Ptr& bb);
+
+
+void haltAllActions(TreeNode *root_node);
 
 typedef std::vector<std::pair<uint16_t, uint8_t>> SerializedTreeStatus;
 
