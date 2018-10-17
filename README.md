@@ -4,7 +4,7 @@ A lightweight behavior tree library in `C++`.
 
 NEWS!
 -----------
-Thank to [Davide Faconti](https://github.com/facontidavide) there is now a more sophisticated version of the library. The new version of this library is available [here](https://github.com/BehaviorTree/BehaviorTree.CPP). There is also GUI available [here](https://github.com/BehaviorTree/Groot).
+Thanks to [Davide Faconti](https://github.com/facontidavide) there is now a more sophisticated version of the library. The new version of this library is available [here](https://github.com/BehaviorTree/BehaviorTree.CPP). There is also GUI available [here](https://github.com/BehaviorTree/Groot).
 
 
 
