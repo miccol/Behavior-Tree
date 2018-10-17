@@ -1,5 +1,11 @@
+A lightweight behavior tree library in `C++`.
+
+
+
 NEWS!
 -----------
+Thank to [Davide Faconti](https://github.com/facontidavide) there is now a more sophisticated version of the library. The new version of this library is available [here](https://github.com/BehaviorTree/BehaviorTree.CPP). There is also GUI available [here](https://github.com/BehaviorTree/Groot).
+
 
 
 <a href="https://btirai.github.io"><img width="200" align="left" url= "https://btirai.github.io/" src="http://michelecolledanchise.com/wp-content/uploads/2018/05/btbook.jpg"></a>
@@ -16,9 +22,7 @@ Our book **Behavior Trees in Robotics and AI**, published by CRC Press Taylor & 
 ====
 ![License MIT](https://img.shields.io/dub/l/vibe-d.svg) ![Version](https://img.shields.io/badge/version-v1.4-green.svg) <img src="https://travis-ci.org/miccol/Behavior-Tree.svg?branch=master"/>
  <br/>       
-A behavior tree library in `C++`.
 
-I am working with [Davide Faconti](https://github.com/facontidavide) on a new version of this library. The new version will have better graphic user interface and it will be the core module for the ROS version and the YARP version of this library.
 
 REFERENCE
 ------------
